@@ -15,7 +15,7 @@ namespace MyProgram {
             return (a <= number && number <= b);
         }
 
-        public static int Combat(Character whoStarts, Character whoFollows, int _whoStarts, int _whoFollows) {
+        public static int Combat(Character whoStarts, Character whoFollows, List < Attacks > ListeAttaques, int _whoStarts, int _whoFollows) {
             int winner = 0;
             bool fight = true;
             int choixAction;
@@ -33,34 +33,61 @@ namespace MyProgram {
                 Thread.Sleep(Program.sleepTime);
 
                 if (whoStarts.energy != 0) {
-                    Console.WriteLine("----------");
-                    Console.WriteLine("Joueur " + _whoStarts + ", que voulez-vous faire ?");
+                    if (!whoStarts.isTransfo) {
+                        Console.WriteLine("----------");
+                        Console.WriteLine("Joueur " + _whoStarts + ", que voulez-vous faire ?");
 
-                    Console.WriteLine("1. Attaquer");
-                    Console.WriteLine("2. Transformation");
-                    Console.WriteLine("3. Se reposer (+1 point d'énergie)");
-                    choixAction = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("1. Attaquer");
+                        Console.WriteLine("2. Transformation");
+                        Console.WriteLine("3. Se reposer (+1 point d'énergie)");
+                        choixAction = Convert.ToInt32(Console.ReadLine());
 
-                    switch (choixAction) {
-                        case 1:
-                            attaqueChoisie = choixAttaque(whoStarts, )
-                            break;
+                        switch (choixAction) {
+                            case 1:
+                                attaqueChoisie = choixAttaque(whoStarts, ListeAttaques);
+                                break;
 
-                        case 2:
-                            break;
+                            case 2:
+                                Character.Transformation(whoStarts, ListeAttaques);
+                                whoStarts.isTransfo = true;
+                                Thread.Sleep(sleepTime);
+                                break;
 
-                        case 3:
-                            break;
+                            case 3:
+                                whoStarts.Repos();
+                                Thread.Sleep(sleepTime);                            
+                                break;
+                        }
                     }
+                    else {
+                        Console.WriteLine("----------");
+                        Console.WriteLine("Joueur " + _whoStarts + ", que voulez-vous faire ?");
+
+                        Console.WriteLine("1. Attaquer");
+                        Console.WriteLine("2. Se reposer (+1 point d'énergie)");
+                        choixAction = Convert.ToInt32(Console.ReadLine());
+
+                        switch (choixAction) {
+                            case 1:
+                                attaqueChoisie = choixAttaque(whoStarts, ListeAttaques);
+                                break;
+
+                            case 2:
+                                whoStarts.Repos();
+                                Thread.Sleep(sleepTime);                            
+                                break;
+                        }
                     
+                    }
+
                 }
-                
+
             }
             
             return winner;
         }
 
-        public static int choixAttaque(Character joueur, List < Attacks > ListeAttaques) {$
+        public static int choixAttaque(Character joueur, List < Attacks > ListeAttaques) {
             int attaqueChoisie = 0;
             switch (joueur.isTransfo) {
                 case true :
@@ -205,6 +232,8 @@ namespace MyProgram {
                     AddPersonnage(joueur1, "Son Goku", "Ultra instinct", 0, 8, 200, 3);
                 }
 
+                Console.Clear();
+
                 Console.WriteLine("----------");
                 Console.WriteLine("Joueur 2");
                 Console.WriteLine("----------");
@@ -291,20 +320,26 @@ namespace MyProgram {
                     AddPersonnage(joueur2, "Son Goku", "Ultra instinct", 0, 8, 200, 3);
                 }
 
+                Console.Clear();
+
                 Thread.Sleep(sleepTime);
+                Console.WriteLine("----------");
                 Console.WriteLine("Très bons chois !");
                 Console.WriteLine(joueur1.name + " VS " + joueur2.name + " !");
+                Console.WriteLine("----------");
+                Thread.Sleep(sleepTime);
+                Console.Clear();
 
                 int whoStarts = random.Next(1,100);
                 if (whoStarts == 1) {
                     whoStarts = 1;
                     int whoFollows = 2;
-                    winFight = Combat(joueur1, joueur2, whoStarts, whoFollows);
+                    winFight = Combat(joueur1, joueur2, Character.ListeAttaques, whoStarts, whoFollows);
                 }
                 else {
                     whoStarts = 2;
                     int whoFollows = 1;
-                    winFight = Combat(joueur2, joueur1, whoStarts, whoFollows);
+                    winFight = Combat(joueur2, joueur1, Character.ListeAttaques, whoStarts, whoFollows);
                 }
 
                 jeu = false;

@@ -8,19 +8,19 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Mohamed\\.nuget\\packages\\": {}
+    "C:\\Users\\Elève\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mohamed\\Desktop\\Babylone\\Csharp.csproj",
+      "projectUniqueName": "C:\\Babylone-main\\Babylone\\Csharp.csproj",
       "projectName": "Csharp",
-      "projectPath": "C:\\Users\\Mohamed\\Desktop\\Babylone\\Csharp.csproj",
-      "packagesPath": "C:\\Users\\Mohamed\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Mohamed\\Desktop\\Babylone\\obj\\",
+      "projectPath": "C:\\Babylone-main\\Babylone\\Csharp.csproj",
+      "packagesPath": "C:\\Users\\Elève\\.nuget\\packages\\",
+      "outputPath": "C:\\Babylone-main\\Babylone\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Mohamed\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Elève\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
