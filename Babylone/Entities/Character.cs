@@ -19,10 +19,39 @@ namespace MyProgram.Entities {
             name = _name;
         }
 
-        /* public static int Attaque(Character joueurAttaque, Character joueurDefend, List<Attacks> ListeAttaques, int attaqueChoisie, int targetHealth, int attackDamagesMin, int attackDamagesMax, int damagesMultiplicator) {
+        public static void Attaque(Character joueurAttaque, Character joueurDefend, List<Attacks> ListeAttaques, int attaqueChoisie) {
             Random random = new Random();
+            int transfoHpLoss = 0;
+
+            if (ListeAttaques[attaqueChoisie].percentHealthCostUnderTransformation > 0) {
+                transfoHpLoss = joueurAttaque.health*ListeAttaques[attaqueChoisie].percentHealthCostUnderTransformation/100;
+                joueurAttaque.health -= transfoHpLoss;
+
+                Console.WriteLine("----------");
+                Console.WriteLine(joueurAttaque.name + " Attaque avec " + ListeAttaques[attaqueChoisie].attackName + " ! " + "-" + ListeAttaques[attaqueChoisie].attackEnergyCost + " points d'énergie et -" + transfoHpLoss + " points de vie");
+            }
+            else {
+                Console.WriteLine("----------");
+                Console.WriteLine(joueurAttaque.name + " Attaque avec " + ListeAttaques[attaqueChoisie].attackName + " ! " + "-" + ListeAttaques[attaqueChoisie].attackEnergyCost + " points d'énergie");
+            }
             
-        } */
+            joueurAttaque.energy -= ListeAttaques[attaqueChoisie].attackEnergyCost;
+            Thread.Sleep(Program.sleepTime);
+            int hit = random.Next(1, ListeAttaques[attaqueChoisie].attackHitChances); // Détermine si l'attaque touche ou non
+
+            if (hit > 50) { // Si ça touche
+                int damagesDealt = random.Next(ListeAttaques[attaqueChoisie].attackDamagesMin, ListeAttaques[attaqueChoisie].attackDamagesMax) * ListeAttaques[attaqueChoisie].damagesMultiplicator;
+                Console.WriteLine("Touché ! " + joueurAttaque.name + " inflige " + damagesDealt + " points de dégâts.");
+                Console.WriteLine("----------");
+
+                joueurDefend.health -= damagesDealt; // Retire les hp de l'ennemi       
+            }
+            else {
+                Console.WriteLine("Loupé !");
+                Console.WriteLine("----------");
+            }
+
+        }
 
         public void Repos() {
             Random random = new Random();

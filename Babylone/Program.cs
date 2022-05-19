@@ -26,15 +26,18 @@ namespace MyProgram {
 
             while (fight) {
                 Console.WriteLine("Rappel des stats :");
-                RappelStats(whoStarts);
-                RappelStats(whoFollows);
-
                 Console.WriteLine("----------");
+                RappelStats(whoStarts);
+                Console.WriteLine("----------");
+                RappelStats(whoFollows);
+                Console.WriteLine("----------");
+
                 Thread.Sleep(Program.sleepTime);
+
+                // Le joueur qui commence attaque
 
                 if (whoStarts.energy != 0) {
                     if (!whoStarts.isTransfo) {
-                        Console.WriteLine("----------");
                         Console.WriteLine("Joueur " + _whoStarts + ", que voulez-vous faire ?");
 
                         Console.WriteLine("1. Attaquer");
@@ -42,9 +45,13 @@ namespace MyProgram {
                         Console.WriteLine("3. Se reposer (+1 point d'énergie)");
                         choixAction = Convert.ToInt32(Console.ReadLine());
 
+                        Console.Clear();
+
                         switch (choixAction) {
                             case 1:
-                                attaqueChoisie = choixAttaque(whoStarts, ListeAttaques);
+                                attaqueChoisie = choixAttaque(whoStarts, ListeAttaques, _whoStarts);
+                                Character.Attaque(whoStarts, whoFollows, ListeAttaques, attaqueChoisie);
+                                Thread.Sleep(Program.sleepTime);
                                 break;
 
                             case 2:
@@ -55,9 +62,10 @@ namespace MyProgram {
 
                             case 3:
                                 whoStarts.Repos();
-                                Thread.Sleep(sleepTime);                            
+                                Thread.Sleep(sleepTime);
                                 break;
                         }
+
                     }
                     else {
                         Console.WriteLine("----------");
@@ -67,9 +75,11 @@ namespace MyProgram {
                         Console.WriteLine("2. Se reposer (+1 point d'énergie)");
                         choixAction = Convert.ToInt32(Console.ReadLine());
 
+                        Console.Clear();
+
                         switch (choixAction) {
                             case 1:
-                                attaqueChoisie = choixAttaque(whoStarts, ListeAttaques);
+                                attaqueChoisie = choixAttaque(whoStarts, ListeAttaques, _whoStarts);
                                 break;
 
                             case 2:
@@ -81,42 +91,218 @@ namespace MyProgram {
                     }
 
                 }
+                else {
+                    Console.WriteLine("----------");
+
+                    Console.WriteLine("Que souhaitez-vous faire ?");
+                    Console.WriteLine("1. Se reposer (Gain d'énergie)");
+                    choixAction = Convert.ToInt32(Console.ReadLine());
+
+                    Console.Clear();
+
+                    if (choixAction == 1) {
+                        whoStarts.Repos();
+                        Thread.Sleep(Program.sleepTime);
+                    }
+
+                }
+
+                if (whoFollows.health <= 0) {
+                    winner = _whoStarts;
+                    fight = false;
+                }
+                if (whoStarts.health <= 0) {
+                    winner = _whoFollows;
+                    fight =false;
+                }
+
+                // Le joueur qui suit attaque
+
+                Console.WriteLine("----------");
+                Thread.Sleep(sleepTime);
+
+                Console.WriteLine("Rappel des stats :");
+                Console.WriteLine("----------");
+                RappelStats(whoFollows);
+                Console.WriteLine("----------");
+                RappelStats(whoStarts);
+                Console.WriteLine("----------");
+
+                if (whoFollows.energy != 0) {
+                    if (!whoFollows.isTransfo) {
+                        Console.WriteLine("Joueur " + _whoFollows + ", que voulez-vous faire ?");
+
+                        Console.WriteLine("1. Attaquer");
+                        Console.WriteLine("2. Transformation");
+                        Console.WriteLine("3. Se reposer (+1 point d'énergie)");
+                        choixAction = Convert.ToInt32(Console.ReadLine());
+
+                        Console.Clear();
+
+                        switch (choixAction) {
+                            case 1:
+                                attaqueChoisie = choixAttaque(whoFollows, ListeAttaques, _whoFollows);
+                                Character.Attaque(whoFollows, whoStarts, ListeAttaques, attaqueChoisie);
+                                Thread.Sleep(Program.sleepTime);
+                                break;
+
+                            case 2:
+                                Character.Transformation(whoFollows, ListeAttaques);
+                                whoFollows.isTransfo = true;
+                                Thread.Sleep(sleepTime);
+                                break;
+
+                            case 3:
+                                whoFollows.Repos();
+                                Thread.Sleep(sleepTime);                            
+                                break;
+                        }
+
+                    }
+                    else {
+                        Console.WriteLine("----------");
+                        Console.WriteLine("Joueur " + _whoFollows + ", que voulez-vous faire ?");
+
+                        Console.WriteLine("1. Attaquer");
+                        Console.WriteLine("2. Se reposer (+1 point d'énergie)");
+                        choixAction = Convert.ToInt32(Console.ReadLine());
+
+                        Console.Clear();
+
+                        switch (choixAction) {
+                            case 1:
+                                attaqueChoisie = choixAttaque(whoFollows, ListeAttaques, _whoFollows);
+                                break;
+
+                            case 2:
+                                whoFollows.Repos();
+                                Thread.Sleep(sleepTime);                            
+                                break;
+                        }
+
+                        Console.Clear();
+                    
+                    }
+
+                }
+                else {
+                    Console.WriteLine("----------");
+
+                    Console.WriteLine("Que souhaitez-vous faire ?");
+                    Console.WriteLine("1. Se reposer (Gain d'énergie)");
+                    choixAction = Convert.ToInt32(Console.ReadLine());
+
+                    Console.Clear();
+
+                    if (choixAction == 1) {
+                        whoFollows.Repos();
+                        Thread.Sleep(Program.sleepTime);
+                    }
+
+                    Console.Clear();
+
+                }
+
+                if (whoStarts.health <= 0) {
+                    winner = _whoFollows;
+                    fight = false;
+                }
+                if (whoFollows.health <= 0) {
+                    winner = _whoStarts;
+                    fight =false;
+                }
 
             }
             
             return winner;
         }
 
-        public static int choixAttaque(Character joueur, List < Attacks > ListeAttaques) {
+        public static int choixAttaque(Character joueur, List < Attacks > ListeAttaques, int numeroJoueur) {
             int attaqueChoisie = 0;
-            switch (joueur.isTransfo) {
-                case true :
-                    Console.WriteLine("----------");
-                    Console.WriteLine("Avec quoi attaquez-vous ? (" + joueur.energy + " énergie et " + joueur.health + " pv restants)");
-                    Console.WriteLine("1 : " + Character.ListeAttaques[0].attackName + " (" + ListeAttaques[0].attackEnergyCost + " énergie et " + ListeAttaques[0].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
-                    Console.WriteLine("2 : " + Character.ListeAttaques[1].attackName + " (" + ListeAttaques[1].attackEnergyCost + " énergie et " + ListeAttaques[1].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
-                    Console.WriteLine("3 : " + Character.ListeAttaques[2].attackName + " (" + ListeAttaques[2].attackEnergyCost + " énergie et " + ListeAttaques[2].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
+
+            switch (numeroJoueur) {
+                case 1:
+                    switch (joueur.isTransfo) {
+                        case true :
+                            Console.WriteLine("Avec quoi attaquez-vous ? (" + joueur.energy + " énergie et " + joueur.health + " pv restants)");
+                            Console.WriteLine("1 : " + Character.ListeAttaques[0].attackName + " (" + ListeAttaques[0].attackEnergyCost + " énergie et " + ListeAttaques[0].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
+                            Console.WriteLine("2 : " + Character.ListeAttaques[1].attackName + " (" + ListeAttaques[1].attackEnergyCost + " énergie et " + ListeAttaques[1].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
+                            Console.WriteLine("3 : " + Character.ListeAttaques[2].attackName + " (" + ListeAttaques[2].attackEnergyCost + " énergie et " + ListeAttaques[2].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
+                            Console.WriteLine("2 : " + Character.ListeAttaques[3].attackName + " (" + ListeAttaques[1].attackEnergyCost + " énergie et " + ListeAttaques[1].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
+                            Console.WriteLine("3 : " + Character.ListeAttaques[4].attackName + " (" + ListeAttaques[2].attackEnergyCost + " énergie et " + ListeAttaques[2].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
+                            break;
+
+                        case false :
+                            Console.WriteLine("Avec quoi attaquez-vous ? (" + joueur.energy + " énergie restante)");
+                            Console.WriteLine("1 : " + Character.ListeAttaques[0].attackName + " (" + ListeAttaques[0].attackEnergyCost + " énergie)");
+                            Console.WriteLine("2 : " + Character.ListeAttaques[1].attackName + " (" + ListeAttaques[1].attackEnergyCost + " énergie)");
+                            Console.WriteLine("3 : " + Character.ListeAttaques[2].attackName + " (" + ListeAttaques[2].attackEnergyCost + " énergie)");
+                            Console.WriteLine("2 : " + Character.ListeAttaques[3].attackName + " (" + ListeAttaques[1].attackEnergyCost + " énergie)");
+                            Console.WriteLine("3 : " + Character.ListeAttaques[4].attackName + " (" + ListeAttaques[2].attackEnergyCost + " énergie)");
+                            break;
+                    }
+
                     break;
 
-                case false :
-                    Console.WriteLine("----------");
-                    Console.WriteLine("Avec quoi attaquez-vous ? (" + joueur.energy + " énergie restante)");
-                    Console.WriteLine("1 : " + Character.ListeAttaques[0].attackName + " (" + ListeAttaques[0].attackEnergyCost + " énergie)");
-                    Console.WriteLine("2 : " + Character.ListeAttaques[1].attackName + " (" + ListeAttaques[1].attackEnergyCost + " énergie)");
-                    Console.WriteLine("3 : " + Character.ListeAttaques[2].attackName + " (" + ListeAttaques[2].attackEnergyCost + " énergie)");
+                case 2:
+                    switch (joueur.isTransfo) {
+                        case true :
+                            Console.WriteLine("Avec quoi attaquez-vous ? (" + joueur.energy + " énergie et " + joueur.health + " pv restants)");
+                            Console.WriteLine("1 : " + Character.ListeAttaques[5].attackName + " (" + ListeAttaques[0].attackEnergyCost + " énergie et " + ListeAttaques[0].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
+                            Console.WriteLine("2 : " + Character.ListeAttaques[6].attackName + " (" + ListeAttaques[1].attackEnergyCost + " énergie et " + ListeAttaques[1].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
+                            Console.WriteLine("3 : " + Character.ListeAttaques[7].attackName + " (" + ListeAttaques[2].attackEnergyCost + " énergie et " + ListeAttaques[2].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
+                            Console.WriteLine("2 : " + Character.ListeAttaques[8].attackName + " (" + ListeAttaques[1].attackEnergyCost + " énergie et " + ListeAttaques[1].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
+                            Console.WriteLine("3 : " + Character.ListeAttaques[9].attackName + " (" + ListeAttaques[2].attackEnergyCost + " énergie et " + ListeAttaques[2].percentHealthCostUnderTransformation*joueur.health/100 + " pv)");
+                            break;
+
+                        case false :
+                            Console.WriteLine("Avec quoi attaquez-vous ? (" + joueur.energy + " énergie restante)");
+                            Console.WriteLine("1 : " + Character.ListeAttaques[5].attackName + " (" + ListeAttaques[0].attackEnergyCost + " énergie)");
+                            Console.WriteLine("2 : " + Character.ListeAttaques[6].attackName + " (" + ListeAttaques[1].attackEnergyCost + " énergie)");
+                            Console.WriteLine("3 : " + Character.ListeAttaques[7].attackName + " (" + ListeAttaques[2].attackEnergyCost + " énergie)");
+                            Console.WriteLine("2 : " + Character.ListeAttaques[8].attackName + " (" + ListeAttaques[1].attackEnergyCost + " énergie)");
+                            Console.WriteLine("3 : " + Character.ListeAttaques[9].attackName + " (" + ListeAttaques[2].attackEnergyCost + " énergie)");
+                            break;
+                    }
+
                     break;
             }
+            
+
+            attaqueChoisie = Convert.ToInt32(Console.ReadLine());
+
+            switch (attaqueChoisie) {
+                case 1 :
+                    attaqueChoisie = 0;
+                    break;
+
+                case 2 :
+                    attaqueChoisie = 1;
+                    break;
+
+                case 3 :
+                    attaqueChoisie = 2;
+                    break;
+
+                case 4 :
+                    attaqueChoisie = 3;
+                    break;
+
+                case 5 :
+                    attaqueChoisie = 4;
+                    break;
+            }
+
+            Console.Clear();
 
             return attaqueChoisie;
         }
 
         public static void RappelStats(Character joueur) {
-            Console.WriteLine("----------");
-            Console.WriteLine("| " + joueur1.name);
-            Console.WriteLine("| Points de vie : " + joueur1.health);
-            Console.WriteLine("| Énergie restante : " + joueur1.energy + " |");
-            Console.WriteLine("| Points de transformation : " + joueur1.transformationPoints + " |");
-            Console.WriteLine("|---------");
+            Console.WriteLine("| " + joueur.name);
+            Console.WriteLine("| Points de vie : " + joueur.health);
+            Console.WriteLine("| Énergie restante : " + joueur.energy + " |");
+            Console.WriteLine("| Points de transformation : " + joueur.transformationPoints + " |");
         }
 
         static void AddPersonnage(Character joueurAttaque, string name, string transformation, int transformationPoints, int energy, int health, int damagesMultiplicator) {
@@ -139,7 +325,7 @@ namespace MyProgram {
 
             while (jeu) {
 
-                Console.WriteLine("Choix des personnages.");
+                Console.WriteLine("Choix des personnages");
 
                 Thread.Sleep(Program.sleepTime);
 
@@ -331,15 +517,15 @@ namespace MyProgram {
                 Console.Clear();
 
                 int whoStarts = random.Next(1,100);
-                if (whoStarts == 1) {
+                if (whoStarts < 50) {
                     whoStarts = 1;
                     int whoFollows = 2;
-                    winFight = Combat(joueur1, joueur2, Character.ListeAttaques, whoStarts, whoFollows);
+                    winFight = Combat(joueur1, joueur2, Character.ListeAttaques, 1, 2);
                 }
                 else {
                     whoStarts = 2;
                     int whoFollows = 1;
-                    winFight = Combat(joueur2, joueur1, Character.ListeAttaques, whoStarts, whoFollows);
+                    winFight = Combat(joueur2, joueur1, Character.ListeAttaques, 2, 1);
                 }
 
                 jeu = false;
